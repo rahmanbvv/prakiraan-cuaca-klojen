@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prakiraan Cuaca Kecamatan Klojen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f0f8ff;
+        }
+        h1 {
+            color: #0077b6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #0077b6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Prakiraan Cuaca Kecamatan Klojen, Malang (3 Hari)</h1>
+    <div id="weather">
+        Memuat data...
+    </div>
+
+    <script>
+        const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=-7.973&longitude=112.6087&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Asia%2FBangkok&forecast_days=3";
+
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                const dates = data.daily.time;
+                const tempMax = data.daily.temperature_2m_max;
+                const tempMin = data.daily.temperature_2m_min;
+                const precipitation = data.daily.precipitation_sum;
+
+                let tableHTML = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Temperatur Maksimum (°C)</th>
+                                <th>Temperatur Minimum (°C)</th>
+                                <th>Curah Hujan (mm)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+                for (let i = 0; i < dates.length; i++) {
+                    tableHTML += `
+                        <tr>
+                            <td>${dates[i]}</td>
+                            <td>${tempMax[i]}°C</td>
+                            <td>${tempMin[i]}°C</td>
+                            <td>${precipitation[i]} mm</td>
+                        </tr>
+                    `;
+                }
+
+                tableHTML += `
+                        </tbody>
+                    </table>
+                `;
+
+                document.getElementById('weather').innerHTML = tableHTML;
+            })
+            .catch(error => {
+                console.error('Gagal mengambil data:', error);
+                document.getElementById('weather').innerHTML = "Data cuaca gagal dimuat.";
+            });
+    </script>
+
+</body>
+</html>
